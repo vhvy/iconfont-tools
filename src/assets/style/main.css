@@ -1,0 +1,27 @@
+body::-webkit-scrollbar {
+  display: none;
+}
+
+body {
+  user-select: none;
+}
+
+html,
+body,
+div {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --icon-size: 32px;
+  --icon-color: #333;
+  --hover-color: rgba(0, 0, 0, .4);
+}
+
+@media (max-width: 768px) {
+  .icon-wrapper {
+    --count: 6;
+  }
+}

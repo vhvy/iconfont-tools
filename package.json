@@ -1,0 +1,29 @@
+{
+  "name": "iconfont-tools",
+  "version": "0.0.1",
+  "description": "iconfont tools",
+  "type": "module",
+  "author": "vhvy",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc -b && vite build",
+    "preview": "vite preview"
+  },
+  "license": "MIT",
+  "packageManager": "pnpm@9.15.1",
+  "devDependencies": {
+    "@types/opentype.js": "^1.3.8",
+    "@vitejs/plugin-vue": "^5.2.1",
+    "@vue/tsconfig": "^0.7.0",
+    "typescript": "^5.7.3",
+    "vite": "^6.0.7",
+    "vue-tsc": "^2.2.0"
+  },
+  "dependencies": {
+    "jszip": "^3.10.1",
+    "lu2": "^2025.1.6",
+    "opentype.js": "^1.3.4",
+    "vue": "^3.5.13"
+  }
+}
