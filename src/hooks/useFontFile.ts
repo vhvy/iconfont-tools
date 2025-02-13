@@ -38,14 +38,16 @@ export const useArrayBufferByFontUrl = (urlRef: Ref<string>) => {
   return arrayBuffer;
 }
 
-export const useFontByArrayBuffer = (arrayBufferRef: Ref<ArrayBuffer | null>) => {
-  const glyphList = computed<GlyphParseResult[]>(() => {
+export const useFontByArrayBuffer = (arrayBufferRef: Ref<ArrayBuffer | null>, isWoff2: Ref<boolean>) => {
+  const glyphList = ref<GlyphParseResult[]>([]);
+
+  const getGlyphList = () => {
     if (!arrayBufferRef.value) return [];
     try {
-      const parseResult = parse(arrayBufferRef.value);
-      return Object.values((parseResult.glyphs as any).glyphs as Glyph[]).reduce((list: GlyphParseResult[], glyph) => {
+      const realArrauBuffer = isWoff2.value ? Uint8Array.from(window.Module.decompress(arrayBufferRef.value)).buffer : arrayBufferRef.value;
+      const parseResult = parse(realArrauBuffer);
+      glyphList.value = Object.values((parseResult.glyphs as any).glyphs as Glyph[]).reduce((list: GlyphParseResult[], glyph) => {
         if (!glyph.unicode || !glyph.name) return list;
-
         const { unicode, name } = glyph;
         list.push({
           unicode,
@@ -57,19 +59,20 @@ export const useFontByArrayBuffer = (arrayBufferRef: Ref<ArrayBuffer | null>) =>
       }, []);
     } catch (err: any) {
       window.LightTip.error("Failed to parse font: " + err.message);
-      return [];
+      glyphList.value = [];
     }
-  });
+  }
 
   const styles = computed(() => {
     return buildIconStyle(glyphList.value);
   });
 
   watch(
-    arrayBufferRef,
-    async (arrayBuffer) => {
-      if (!arrayBuffer) return;
-      const fontFace = new FontFace("iconfont", arrayBuffer);
+    [arrayBufferRef, isWoff2],
+    async () => {
+      getGlyphList();
+      if (!arrayBufferRef.value) return;
+      const fontFace = new FontFace("iconfont", arrayBufferRef.value);
       await fontFace.load();
       document.fonts.add(fontFace);
     },
@@ -89,6 +92,7 @@ const URL_PARAM = "iconurl";
 export const useFontFile = () => {
   const fontUrl = ref("");
   const inputFontUrl = ref("");
+  const isWoff2 = ref(false);
 
   const arrayBufferByUrl = useArrayBufferByFontUrl(fontUrl);
   const arrayBufferByFile = shallowRef<ArrayBuffer | null>(null);
@@ -97,7 +101,7 @@ export const useFontFile = () => {
     return arrayBufferByFile.value || arrayBufferByUrl.value;
   });
 
-  const { glyphList, styles } = useFontByArrayBuffer(arrayBuffer);
+  const { glyphList, styles } = useFontByArrayBuffer(arrayBuffer, isWoff2);
 
   const handleFontUrlChange = () => {
     if (!inputFontUrl.value) return;
@@ -113,6 +117,7 @@ export const useFontFile = () => {
     if (!file) return;
     fontUrl.value = "";
     const arrayBuffer = await file.arrayBuffer();
+    isWoff2.value = file.name.endsWith(".woff2");
     arrayBufferByFile.value = arrayBuffer;
     window.LightTip.success("Font file loaded successfully");
   }
@@ -128,6 +133,7 @@ export const useFontFile = () => {
     () => {
       if (arrayBufferByFile.value) {
         arrayBufferByFile.value = null;
+        isWoff2.value = /.woff2/.test(fontUrl.value);
       }
     }
   )
