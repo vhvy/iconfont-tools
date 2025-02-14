@@ -23,6 +23,7 @@
     <IconList :list="glyphList" />
     <BoxSelection />
     <IconPreviewDialog ref="dialogRef" @startExport="handleStartExport" />
+    <ScrollBar />
   </div>
 </template>
 
@@ -32,7 +33,7 @@ import IconStyle from './components/IconStyle.vue';
 import IconList from './components/IconList.vue';
 import IconPreviewDialog from './components/IconPreviewDialog.vue';
 import BoxSelection from './components/BoxSelection.vue';
-
+import ScrollBar from './components/ScrollBar.vue';
 import { useSelectIcon } from './hooks/useSelectIcon';
 import { useFontFile } from './hooks/useFontFile';
 
