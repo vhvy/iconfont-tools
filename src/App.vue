@@ -3,7 +3,7 @@
     <div class="action-wrapper">
       <div class="btn-group">
         <label>Font file:</label>
-        <input class="ui-input" v-model="inputFontUrl" type="url" placeholder="please input iconfont http(s) url"
+        <input class="ui-input font-from-input" v-model="inputFontUrl" type="url" placeholder="please input iconfont http(s) url"
           pattern="https?:\/\/.+" @keyup.enter="handleFontUrlChange" />
         <button data-type="primary" class="ui-button" @click="handleFontUrlChange">Load</button>
         <span>&nbsp;or&nbsp;</span>
@@ -12,7 +12,7 @@
 
       <div class="btn-group">
         <label>Icon prefix:</label>
-        <input v-model="iconPrefix" class="ui-input" type="text" placeholder="please input icon prefix" />
+        <input v-model="iconPrefix" class="ui-input font-from-input" type="text" placeholder="please input icon prefix" />
         <button class="ui-button" @click="handleCopyAllIconCSS">Copy All Icon CSS</button>
         <button class="ui-button" @click="handleConvertAllIconfontToImg">Convert all iconfont to img</button>
         <template v-if="hasSelectIcon">
@@ -194,6 +194,10 @@ const handleStartExport = (iconSetting: IconSetting) => {
   input:invalid {
     border: 1px solid red;
   }
+}
+
+.font-from-input {
+  width: 220px;
 }
 
 .btn-group label {

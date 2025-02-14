@@ -1,5 +1,5 @@
 <template>
-  <div class="icon-wrapper">
+  <div class="icon-wrapper" v-if="props.list.length">
     <template v-for="(item, index) in props.list" :key="item.name">
       <div v-if="item.unicode" :class="getIconItemWrapperClass(index)" ref="iconItemRef"
         :data-icon-unicode="item.unicode.toString(16)" :data-icon-name="item.name" :data-index="index" :data-event="EVENT_ENUM.TOGGLE_ITEM_SELECT">
