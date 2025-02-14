@@ -5,7 +5,7 @@ import { parse } from "opentype.js";
 import type { Glyph } from "opentype.js";
 import type { GlyphParseResult } from "../types";
 
-export const useArrayBufferByFontUrl = (urlRef: Ref<string>) => {
+export const useArrayBufferByFontUrl = (urlRef: Ref<string>, isWoff2: Ref<boolean>) => {
   const arrayBuffer = shallowRef<ArrayBuffer | null>(null);
 
   const fetchFontBuffer = async () => {
@@ -17,6 +17,7 @@ export const useArrayBufferByFontUrl = (urlRef: Ref<string>) => {
         }
         const buffer = await res.arrayBuffer();
         arrayBuffer.value = buffer;
+        isWoff2.value = /.woff2/.test(urlRef.value);
         window.LightTip.success("Font loaded successfully");
         history.replaceState({}, "", location.pathname + `?${URL_PARAM}=` + encodeURIComponent(urlRef.value));
       } catch (e: any) {
@@ -94,7 +95,7 @@ export const useFontFile = () => {
   const inputFontUrl = ref("");
   const isWoff2 = ref(false);
 
-  const arrayBufferByUrl = useArrayBufferByFontUrl(fontUrl);
+  const arrayBufferByUrl = useArrayBufferByFontUrl(fontUrl, isWoff2);
   const arrayBufferByFile = shallowRef<ArrayBuffer | null>(null);
 
   const arrayBuffer = computed(() => {
@@ -133,7 +134,6 @@ export const useFontFile = () => {
     () => {
       if (arrayBufferByFile.value) {
         arrayBufferByFile.value = null;
-        isWoff2.value = /.woff2/.test(fontUrl.value);
       }
     }
   )
