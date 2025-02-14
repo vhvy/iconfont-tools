@@ -61,16 +61,39 @@ const getIconItemClass = (glyph: GlyphParseResult, index: number) => {
 <style scoped>
 .icon-wrapper {
   --count: 12;
-  --inline-gap: 2;
-  --size: calc(((100 - var(--inline-gap) * 2) * 1vw - 1px) / var(--count));
-  --inline-size: calc(var(--inline-gap) * 1vw);
+  /* 每行显示的图标数量 */
+
+  --inline-size: 1.5vw;
+  /* margin 水平宽度 */
+
+  --size: calc((100vw - (var(--inline-size) * 2) - 1px) / var(--count));
+  /* 每个图标的大小 */
 
   display: flex;
   flex-flow: row wrap;
   margin: var(--inline-size);
   border-top: 1px solid #ccc;
   border-left: 1px solid #ccc;
+
+
+  @media (max-width: 1400px) {
+    --count: 10;
+  }
+
+  @media (max-width: 1200px) {
+    --count: 8;
+  }
+
+  @media (max-width: 992px) {
+    --count: 6;
+  }
+
+  @media (max-width: 768px) {
+    --count: 4;
+  }
 }
+
+
 
 .icon-item {
   font-family: "iconfont";
@@ -92,7 +115,6 @@ const getIconItemClass = (glyph: GlyphParseResult, index: number) => {
   position: relative;
   border-right: 1px solid #ccc;
   border-bottom: 1px solid #ccc;
-  position: relative;
   padding-top: calc(var(--size) / 3.5);
 
   &.selected::before {
