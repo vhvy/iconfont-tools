@@ -1,11 +1,11 @@
 <template>
   <div class="icon-wrapper">
     <template v-for="(item, index) in props.list" :key="item.name">
-      <div v-if="item.unicode" :class="getIconItemClass(item, index)" ref="iconItemRef"
-        :data-unicode="item.unicode.toString(16)" :data-name="item.name">
-        <span class="icon-name" :title="item.name || ''">{{ item.name }}</span>
-        <span class="icon-value">{{ item.unicode.toString(16) }}</span>
-        <ItemAction :glyph="item" :index="index" />
+      <div v-if="item.unicode" :class="getIconItemWrapperClass(index)" ref="iconItemRef"
+        :data-icon-unicode="item.unicode.toString(16)" :data-icon-name="item.name" :data-index="index" :data-event="EVENT_ENUM.TOGGLE_ITEM_SELECT">
+        <span :class="['icon-item', `icon-${item.name}`]" :data-event="EVENT_ENUM.COPY_ICON_CLASS" title="copy icon class" />
+        <span class="icon-name" :data-event="EVENT_ENUM.COPY_ICON_NAME" title="copy icon name">{{ item.name }}</span>
+        <span class="icon-value" :data-event="EVENT_ENUM.COPY_ICON_VALUE" title="copy icon value">{{ item.unicode.toString(16) }}</span>
       </div>
     </template>
   </div>
@@ -13,8 +13,8 @@
 
 <script setup lang="ts">
 import { ref, watch, inject } from "vue";
-import ItemAction from "./ItemAction.vue";
 import { hasIntersection } from "../utils";
+import { EVENT_ENUM, PROVIDER_ENUM } from "../constants";
 import type { GlyphParseResult, SelectIconContext } from "../types";
 
 
@@ -25,7 +25,7 @@ const props = defineProps<{
 }>();
 
 const iconItemRef = ref<HTMLElement[]>([]);
-const { selectAreaStyle, selectIconIndexSet, handleAddSelectIcon, handleRemoveSelectIcon } = inject("select-icon") as SelectIconContext;
+const { selectAreaStyle, selectIconIndexSet, handleAddSelectIcon, handleRemoveSelectIcon } = inject(PROVIDER_ENUM.SELECT_ICON) as SelectIconContext;
 
 watch(
   selectAreaStyle,
@@ -47,8 +47,8 @@ watch(
   }
 )
 
-const getIconItemClass = (glyph: GlyphParseResult, index: number) => {
-  const classList = [`icon-${glyph.name}`, "icon-item"];
+const getIconItemWrapperClass = (index: number) => {
+  const classList = ["icon-item-wrapper"];
 
   if (selectIconIndexSet.value.has(index)) {
     classList.push("selected");
@@ -93,19 +93,7 @@ const getIconItemClass = (glyph: GlyphParseResult, index: number) => {
   }
 }
 
-
-
-.icon-item {
-  font-family: "iconfont";
-  font-size: 32px;
-  font-style: normal;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  user-select: none;
-  contain: content;
-}
-
-.icon-item {
+.icon-item-wrapper {
   flex: 0 1 var(--size);
   height: var(--size);
   overflow: hidden;
@@ -116,17 +104,26 @@ const getIconItemClass = (glyph: GlyphParseResult, index: number) => {
   border-right: 1px solid #ccc;
   border-bottom: 1px solid #ccc;
   padding-top: calc(var(--size) / 3.5);
+  transition: background-color 0.3s ease-in-out;
 
-  &.selected::before {
-    color: red;
+  &:hover {
+    background-color: #f0f0f0;
+  }
+
+  &.selected {
+    background-color: #edeff2;
   }
 }
 
-body:not(.box-selection-active) .icon-item:hover {
-  .icon-action-wrapper {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.icon-item {
+  font-family: "iconfont";
+  font-size: 32px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  user-select: none;
+  contain: content;
+  cursor: pointer;
 }
 
 .icon-value,
@@ -139,5 +136,6 @@ body:not(.box-selection-active) .icon-item:hover {
   margin-top: 1em;
   overflow: hidden;
   text-overflow: ellipsis;
+  cursor: pointer;
 }
 </style>

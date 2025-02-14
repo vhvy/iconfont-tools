@@ -5,3 +5,8 @@ export enum EVENT_ENUM {
   TOGGLE_ITEM_SELECT = "toggle-item-select",
   CONVERT_TO_IMG = "convert-to-img"
 };
+
+export enum PROVIDER_ENUM {
+  SELECT_ICON = "select-icon",
+  GLOBAL_STATE = "global-state"
+}

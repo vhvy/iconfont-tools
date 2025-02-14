@@ -1,5 +1,5 @@
 <template>
-  <dialog class="dialog-preview" @click="handleCloseDialog" ref="dialogRef">
+  <dialog class="dialog-preview" @click="handleCloseDialog" ref="dialogRef" @close="handleCloseDialog">
     <div class="dialog-preview-content">
       <div class="dialog-preview-canvas-wrapper">
         <canvas :width="defaultImgSize" :height="defaultImgSize" class="dialog-preview-canvas" ref="canvasRef"></canvas>
@@ -119,10 +119,9 @@ const _handleCloseDialog = () => {
   dialogRef.value?.close();
 }
 
-const handleCloseDialog = (e: MouseEvent) => {
-  if ((e.target as HTMLElement).tagName === "DIALOG") {
-    _handleCloseDialog();
-  }
+const handleCloseDialog = (e: Event) => {
+  if (!(e.target instanceof HTMLDialogElement)) return;
+  _handleCloseDialog();
 }
 
 const handleStartExport = () => {
@@ -143,10 +142,11 @@ watch(
 );
 
 watch(dialogIsVisible, (value) => {
+  const hiddenClass = "overhidden";
   if (value) {
-    document.body.style.overflow = "hidden";
+    document.body.classList.add(hiddenClass);
   } else {
-    document.body.style.overflow = "";
+    document.body.classList.remove(hiddenClass);
   }
 }, { immediate: true });
 

@@ -76,6 +76,12 @@ onUnmounted(() => {
 });
 </script>
 
+<style>
+.overhidden .scroll-bar-container {
+  display: none;
+}
+</style>
+
 <style scoped>
 .scroll-bar-container {
   --radius: 0px;

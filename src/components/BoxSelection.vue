@@ -3,12 +3,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, inject, watch } from "vue";
+import { ref, reactive, computed, inject } from "vue";
 import { useEvent } from "../hooks/useEvent";
+import { PROVIDER_ENUM } from "../constants";
 import type { Point, ScrollInfo, SelectIconContext } from "../types";
 
-
-const { handleUpdateSelectAreaStyle } = inject("select-icon") as SelectIconContext;
+const { handleUpdateSelectAreaStyle } = inject(PROVIDER_ENUM.SELECT_ICON) as SelectIconContext;
 const isMouseDown = ref(false);
 const isMouseMove = ref(false);
 const startPointInfo = reactive<Point>({
@@ -77,6 +77,10 @@ const styles = computed(() => {
   const width = Math.abs(endX - startX);
   const height = Math.abs(endY - startY);
 
+  const MIN_SIZE = 3;
+
+  if (width < MIN_SIZE || height < MIN_SIZE) return {};
+
   const style = {
     top: startY,
     left: startX,
@@ -95,13 +99,6 @@ const styleByPx = computed(() => {
     return result;
   }, {} as Record<string, string>);
 });
-
-watch(
-  isMouseMove,
-  (value) => {
-    value ? document.body.classList.add("box-selection-active") : document.body.classList.remove("box-selection-active");
-  }
-)
 
 useEvent("mousedown", handleMouseDown);
 useEvent("mouseup", handleMouseUp);

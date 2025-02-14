@@ -1,5 +1,6 @@
 import { ref, provide } from 'vue';
 import type { SelectIconContext } from '../types';
+import { PROVIDER_ENUM } from '../constants';
 
 export const useSelectIcon = () => {
   const selectAreaStyle = ref<Record<string, number>>({});
@@ -25,7 +26,7 @@ export const useSelectIcon = () => {
     handleRemoveSelectIcon
   };
 
-  provide("select-icon", provideContext);
+  provide(PROVIDER_ENUM.SELECT_ICON, provideContext);
 
   return provideContext;
 } 
